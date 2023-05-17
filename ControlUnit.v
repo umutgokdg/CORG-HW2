@@ -104,22 +104,22 @@ always @(seq_counter) begin
         
     reg_RF_OutASel = 3'bX;
     reg_RF_OutBSel = 3'bX;
-    reg_RF_FunSel = 2'bX;
     reg_RF_RSel = 4'bX;
     reg_RF_TSel = 4'bX;
-    reg_ALU_FunSel = 4'bX;
     reg_ARF_OutCSel = 2'bX;
     reg_ARF_OutDSel = 2'bX;
     reg_ARF_FunSel = 2'bX;
     reg_ARF_RegSel = 4'bX;
     reg_IR_LH = 1'bX;
     reg_IR_Enable = 1'bX;
-    reg_IR_Funsel = 2'bX;
     reg_Mem_WR = 1'bX;
-    reg_Mem_CS = 1'bX;
-    reg_MuxASel = 2'bX;
-    reg_MuxBSel = 2'bX;
-    reg_MuxCSel = 1'bX; 
+    reg_Mem_CS = 1'b0;
+    reg_RF_FunSel = 2'bX;
+    reg_ALU_FunSel = 4'bX;
+    reg_IR_Funsel = 2'bX;
+
+
+
 
     
     SREGA = (SREG1 > SREG2) ? SREG1 : SREG2;

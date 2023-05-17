@@ -91,6 +91,7 @@ assign ADDRESSING_MODE = IROut[10];
 
 assign OPCODE = IROut[15:12];
 
+reg [7:0] VALUE;
 
 reg [3:0] seq_counter = 0;
 assign seq = seq_counter;
@@ -145,127 +146,274 @@ always @(seq_counter) begin
     else begin 
         case(OPCODE)
             4'b0000 : begin //AND
-            if (seq_counter == 4'b0010) begin // T2: RF <- RF & RF
-                update_SREGA_flag = 1;
-                update_SREGB_flag = 1;
-                reg_ALU_FunSel = 4'b0111;
-                //t3
-                update_DSTREG_flag = 1;
-            end
+                if (seq_counter == 4'b0010) begin // T2: RF <- RF & RF
+                    update_SREGA_flag = 1;
+                    update_SREGB_flag = 1;
+                    reg_ALU_FunSel = 4'b0111;
+                    //t3
+                    update_DSTREG_flag = 1;
+                end
             end
             4'b0001 : begin //OR
-            if (seq_counter == 4'b0010) begin // T2: RF <- RF | RF
-                update_SREGA_flag = 1;
-                update_SREGB_flag = 1;
-                reg_ALU_FunSel = 4'b1000;
-                //t3
-                update_DSTREG_flag = 1;
-            end
+                if (seq_counter == 4'b0010) begin // T2: RF <- RF | RF
+                    update_SREGA_flag = 1;
+                    update_SREGB_flag = 1;
+                    reg_ALU_FunSel = 4'b1000;
+                    //t3
+                    update_DSTREG_flag = 1;
+                end
             end
             4'b0010 : begin //NOT
-            if (seq_counter == 4'b0010) begin // T2: RF <- RF'
-                SREGA = SREG1;
-                update_SREGA_flag = 1;
-                reg_ALU_FunSel = 4'b0010;
-                //t3
-                update_DSTREG_flag = 1;
-            end
+                if (seq_counter == 4'b0010) begin // T2: RF <- RF'
+                    SREGA = SREG1;
+                    update_SREGA_flag = 1;
+                    reg_ALU_FunSel = 4'b0010;
+                    //t3
+                    update_DSTREG_flag = 1;
+                end
             end
             4'b0011 : begin //ADD
-            if (seq_counter == 4'b0010) begin // T2: RF <- RF + RF
-                update_SREGA_flag = 1;
-                update_SREGB_flag = 1;
-                reg_ALU_FunSel = 4'b0100;
-                //t3
-                update_DSTREG_flag = 1;
-            end
+                if (seq_counter == 4'b0010) begin // T2: RF <- RF + RF
+                    update_SREGA_flag = 1;
+                    update_SREGB_flag = 1;
+                    reg_ALU_FunSel = 4'b0100;
+                    //t3
+                    update_DSTREG_flag = 1;
+                end
             end
             4'b0100 : begin //SUB
-            if (seq_counter == 4'b0010) begin // T2: RF <- RF - RF
-                update_SREGA_flag = 1;
-                update_SREGB_flag = 1;
-                reg_ALU_FunSel = 4'b0101;
-                //t3
-                update_DSTREG_flag = 1;
-            end
+                if (seq_counter == 4'b0010) begin // T2: RF <- RF - RF
+                    update_SREGA_flag = 1;
+                    update_SREGB_flag = 1;
+                    reg_ALU_FunSel = 4'b0101;
+                    //t3
+                    update_DSTREG_flag = 1;
+                end
             end
             4'b0101 : begin //LSR
-            if (seq_counter == 4'b0010) begin // T2: RF <- RF + 1
-                SREGA = SREG1;
-                update_SREGA_flag = 1;
-                reg_ALU_FunSel = 4'b1100;
-                //t3
-                update_DSTREG_flag = 1;
-            end
+                if (seq_counter == 4'b0010) begin // T2: RF <- RF + 1
+                    SREGA = SREG1;
+                    update_SREGA_flag = 1;
+                    reg_ALU_FunSel = 4'b1100;
+                    //t3
+                    update_DSTREG_flag = 1;
+                end
             end
             4'b0110 : begin //LSL
-            if (seq_counter == 4'b0010) begin // T2: RF <- RF - 1
-                SREGA = SREG1;
-                update_SREGA_flag = 1;
-                reg_ALU_FunSel = 4'b1011;
-                //t3
-                update_DSTREG_flag = 1;
-            end
+                if (seq_counter == 4'b0010) begin // T2: RF <- RF - 1
+                    SREGA = SREG1;
+                    update_SREGA_flag = 1;
+                    reg_ALU_FunSel = 4'b1011;
+                    //t3
+                    update_DSTREG_flag = 1;
+                end
             end
             4'b0111 : begin //INC
-            if (seq_counter == 4'b0010) begin
-                update_SREG1_flag = 1;
-                if(SREG1 > 4'd3) begin
-                    reg_ARF_FunSel = 2'b11; // INC
+                if (seq_counter == 4'b0010) begin
+                    update_SREG1_flag = 1;
+                    if(SREG1 > 4'd3) begin
+                        reg_ARF_FunSel = 2'b11; // INC
+                    end
+                    else begin
+                        reg_RF_FunSel = 2'b11;
+                    end
                 end
-                else begin
-                    reg_RF_FunSel = 2'b11;
+                if (seq_counter == 4'b0011) begin // T2: RF <- RF + 1
+                    SREGA = SREG1;
+                    update_SREGA_flag = 1;
+                    reg_ALU_FunSel = 4'b0000; 
+                    //t3
+                    update_DSTREG_flag = 0;
                 end
-            end
-            if (seq_counter == 4'b0011) begin // T2: RF <- RF + 1
-                SREGA = SREG1;
-                update_SREGA_flag = 1;
-                reg_ALU_FunSel = 4'b0000; 
-                //t3
-                update_DSTREG_flag = 0;
-            end
-            if (seq_counter == 4'b0100) begin
-                update_SREG1_flag = 1;
-                if(SREG1 > 4'd3) begin
-                    reg_ARF_FunSel = 2'b10; // DEC
+                if (seq_counter == 4'b0100) begin
+                    update_SREG1_flag = 1;
+                    if(SREG1 > 4'd3) begin
+                        reg_ARF_FunSel = 2'b10; // DEC
+                    end
+                    else begin
+                        reg_RF_FunSel = 2'b10;
+                    end
                 end
-                else begin
-                    reg_RF_FunSel = 2'b10;
-                end
-            end
             end
             4'b1000 : begin //DEC
-            if (seq_counter == 4'b0010) begin
-                update_SREG1_flag = 1;
-                if(SREG1 > 4'd3) begin
-                    reg_ARF_FunSel = 2'b01; // DEC
+                if (seq_counter == 4'b0010) begin
+                    update_SREG1_flag = 1;
+                    if(SREG1 > 4'd3) begin
+                        reg_ARF_FunSel = 2'b01; // DEC
+                    end
+                    else begin
+                        reg_RF_FunSel = 2'b01;
+                    end
                 end
-                else begin
-                    reg_RF_FunSel = 2'b01;
+                if (seq_counter == 4'b0011) begin // T2: RF <- RF + 1
+                    SREGA = SREG1;
+                    update_SREGA_flag = 1;
+                    reg_ALU_FunSel = 4'b0000;
+                    //t3
+                    update_DSTREG_flag = 0;
+                end
+                if (seq_counter == 4'b0100) begin
+                    update_SREG1_flag = 1;
+                    if(SREG1 > 4'd3) begin
+                        reg_ARF_FunSel = 2'b11; // INC
+                    end
+                    else begin
+                        reg_RF_FunSel = 2'b11; // INC
+                    end
                 end
             end
-            if (seq_counter == 4'b0011) begin // T2: RF <- RF + 1
-                SREGA = SREG1;
-                update_SREGA_flag = 1;
-                reg_ALU_FunSel = 4'b0000;
-                //t3
-                update_DSTREG_flag = 0;
+            4'b1001 : begin //BRA
+            //CALCULATE VALUE
+                if (seq_counter == 4'b0010) begin //
+                    if (ADDRESSING_MODE) begin //DIRECT 
+                        reg_ARF_OutDSel <= 2'b00; // AR
+                        reg_MuxBSel <= 2'b11; // MEMORY OUT
+                        reg_ARF_FunSel <= 2'b01; // LOAD 
+                        reg_ARF_RegSel <= 4'b0100; 
+                    end
+                end
+                if (seq_counter == 4'b0011) begin //BRA
+                    reg_MuxBSel = (ADDRESSING_MODE) ? 2'b01 : 2'b10;
+                    reg_ARF_RegSel = 4'b1000; //PC
+                    reg_ARF_FunSel = 2'b01; // LOAD
+                end
             end
-            if (seq_counter == 4'b0100) begin
-                update_SREG1_flag = 1;
-                if(SREG1 > 4'd3) begin
+            4'b1010 : begin //BNE
+
+                if (seq_counter == 4'b0010) begin //
+                    if (!ALUOutFlag[0]) begin
+                        if (ADDRESSING_MODE) begin //DIRECT 
+                            reg_ARF_OutDSel <= 2'b00; // AR
+                            reg_MuxBSel <= 2'b11; // MEMORY OUT
+                            reg_ARF_FunSel <= 2'b01; // LOAD 
+                            reg_ARF_RegSel <= 4'b0100; 
+                        end
+                    end
+                    else 
+                    seq_counter <= 4'b0000;
+                end
+                if (seq_counter == 4'b0011) begin //BRA
+                    reg_MuxBSel = (ADDRESSING_MODE) ? 2'b01 : 2'b10;
+                    reg_ARF_RegSel = 4'b1000; //PC
+                    reg_ARF_FunSel = 2'b01; // LOAD
+                end
+            end
+            4'b1011 : begin //MOV
+                if (seq_counter == 4'b0010) begin
+                    update_SREGB_flag = 1;
+                    reg_ALU_FunSel = 4'b0001;
+                    update_DSTREG_flag = 1;
+                end
+            end
+            4'b1100 : begin //LD
+                if (seq_counter == 4'b0010) begin //
+                    if (ADDRESSING_MODE) begin //DIRECT 
+                        reg_ARF_OutDSel <= 2'b00; // AR
+                        reg_MuxBSel <= 2'b11; // MEMORY OUT
+                        reg_ARF_FunSel <= 2'b01; // LOAD 
+                        reg_ARF_RegSel <= 4'b0100; 
+                    end
+                end
+                if (seq_counter == 4'b0011) begin //BRA
+                reg_MuxASel = (ADDRESSING_MODE) ? 2'b01 : 2'b10;
+                reg_RF_FunSel = 2'b01; // LOAD
+                    case (RSEL)
+                        2'b00 : begin
+                            reg_RF_RegSel = 4'b1000; //R1
+                        end
+                        2'b01 : begin
+                            reg_RF_RegSel = 4'b0100; //R2
+                        end
+                        2'b10 : begin
+                            reg_RF_RegSel = 4'b0010; //R3
+                        end
+                        2'b11 : begin
+                            reg_RF_RegSel = 4'b0001; //R4
+                        end
+                    endcase
+                end
+            end
+            4'b1101 : begin //ST
+                if (seq_counter == 4'b0010) begin //
+                    reg_ARF_OutDSel <= 2'b00; // AR
+                    reg_MuxBSel <= 2'b11; // MEMORY OUT
+                    reg_ARF_FunSel <= 2'b01; // LOAD 
+                    reg_ARF_RegSel <= 4'b0100; 
+                end
+                if (seq_counter == 4'b0011) begin //
+                    case (RSEL)
+                        2'b00 : begin
+                            reg_RF_OutBSel = 3'b100; //R1
+                        end
+                        2'b01 : begin
+                            reg_RF_OutBSel = 3'b101; //R2
+                        end
+                        2'b10 : begin
+                            reg_RF_OutBSel = 3'b110; //R3
+                        end
+                        2'b11 : begin
+                            reg_RF_OutBSel = 3'b111; //R4
+                        end
+                    endcase
+                reg_ALU_FunSel = 4'b0001; //Pass B
+                reg_Mem_WR = 1; // write
+                end
+            end
+            4'b1110 : begin //PULL
+                if (seq_counter == 4'b0010) begin //
+                    reg_ARF_RegSel = 4'b0010; //SP
                     reg_ARF_FunSel = 2'b11; // INC
                 end
-                else begin
-                    reg_RF_FunSel = 2'b11; // INC
+                if (seq_counter == 4'b0011) begin //
+                    reg_ARF_OutDSel = 2'b01;
+                    reg_MuxASel = 2'b01; // SP
+                    reg_RF_FunSel = 2'b01; // LOAD
+                    case (RSEL)
+                        2'b00 : begin
+                            reg_RF_RegSel = 4'b1000; //R1
+                        end
+                        2'b01 : begin
+                            reg_RF_RegSel = 4'b0100; //R2
+                        end
+                        2'b10 : begin
+                            reg_RF_RegSel = 4'b0010; //R3
+                        end
+                        2'b11 : begin
+                            reg_RF_RegSel = 4'b0001; //R4
+                        end
+                    endcase
                 end
             end
+            4'b1111 : begin //PUSH
+                if (seq_counter == 4'b0010) begin //
+                    reg_ARF_OutDSel <= 2'b01; // SP
+                    case (RSEL)
+                        2'b00 : begin
+                            reg_RF_OutBSel = 3'b100; //R1
+                        end
+                        2'b01 : begin
+                            reg_RF_OutBSel = 3'b101; //R2
+                        end
+                        2'b10 : begin
+                            reg_RF_OutBSel = 3'b110; //R3
+                        end
+                        2'b11 : begin
+                            reg_RF_OutBSel = 3'b111; //R4
+                        end
+                    endcase
+                reg_ALU_FunSel = 4'b0001; //Pass B
+                reg_Mem_WR = 1; // write
+                end
+                if (seq_counter == 4'b0011) begin //
+                    reg_ARF_RegSel = 4'b0010; //SP
+                    reg_ARF_FunSel = 2'b10; // DEC
+                end
             end
-
         endcase
     end
 end
 
+reg update_ADDRESS_flag;
 reg update_SREGA_flag;
 reg update_SREGB_flag;
 reg update_DSTREG_flag;
@@ -384,4 +532,3 @@ always @(posedge update_SREG1_flag) begin
     update_SREG1_flag <= 0;
 end
 endmodule
-

@@ -319,16 +319,16 @@ always @(seq_counter) begin
                 reg_RF_FunSel = 2'b01; // LOAD
                     case (RSEL)
                         2'b00 : begin
-                            reg_RF_RegSel = 4'b1000; //R1
+                            reg_RF_RSel = 4'b1000; //R1
                         end
                         2'b01 : begin
-                            reg_RF_RegSel = 4'b0100; //R2
+                            reg_RF_RSel = 4'b0100; //R2
                         end
                         2'b10 : begin
-                            reg_RF_RegSel = 4'b0010; //R3
+                            reg_RF_RSel = 4'b0010; //R3
                         end
                         2'b11 : begin
-                            reg_RF_RegSel = 4'b0001; //R4
+                            reg_RF_RSel = 4'b0001; //R4
                         end
                     endcase
                 end
@@ -370,16 +370,16 @@ always @(seq_counter) begin
                     reg_RF_FunSel = 2'b01; // LOAD
                     case (RSEL)
                         2'b00 : begin
-                            reg_RF_RegSel = 4'b1000; //R1
+                            reg_RF_RSel = 4'b1000; //R1
                         end
                         2'b01 : begin
-                            reg_RF_RegSel = 4'b0100; //R2
+                            reg_RF_RSel = 4'b0100; //R2
                         end
                         2'b10 : begin
-                            reg_RF_RegSel = 4'b0010; //R3
+                            reg_RF_RSel = 4'b0010; //R3
                         end
                         2'b11 : begin
-                            reg_RF_RegSel = 4'b0001; //R4
+                            reg_RF_RSel = 4'b0001; //R4
                         end
                     endcase
                 end

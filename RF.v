@@ -12,6 +12,143 @@ module RF(
     reg [7:0] T1, T2, T3, T4;
     reg SET_R1, SET_R2, SET_R3, SET_R4, SET_T1, SET_T2, SET_T3, SET_T4;   
    
+    always @(RSel,O1Sel,O2Sel,FunSel) begin
+        case (RSel)
+            4'b0000: begin 
+            end
+            4'b0001: begin
+            SET_R4 <= 1'b1;
+            end
+            4'b0010: begin
+            SET_R3 <= 1'b1;
+            end
+            4'b0011: begin
+            SET_R3 <= 1'b1;
+            SET_R4 <= 1'b1;
+            end
+            4'b0100: begin
+            SET_R2 <= 1'b1;
+            end
+            4'b0101: begin
+            SET_R2 <= 1'b1;
+            SET_R4 <= 1'b1;
+            end
+            4'b0110: begin
+            SET_R2 <= 1'b1;
+            SET_R3 <= 1'b1;
+            end
+            4'b0111: begin
+            SET_R2 <= 1'b1;
+            SET_R3 <= 1'b1;
+            SET_R4 <= 1'b1;
+            end       
+            4'b1000: begin 
+            SET_R1 <= 1'b1;
+            end
+            4'b1001: begin
+            SET_R1 <= 1'b1;
+            SET_R4 <= 1'b1;
+            end
+            4'b1010: begin
+            SET_R1 <= 1'b1;
+            SET_R3 <= 1'b1;
+            end
+            4'b1011: begin
+            SET_R1 <= 1'b1;
+            SET_R3 <= 1'b1;
+            SET_R4 <= 1'b1;
+            end
+            4'b1100: begin
+            SET_R1 <= 1'b1;
+            SET_R2 <= 1'b1;
+            end
+            4'b1101: begin
+            SET_R1 <= 1'b1;
+            SET_R2 <= 1'b1;
+            SET_R4 <= 1'b1;
+            end
+            4'b1110: begin
+            SET_R1 <= 1'b1;
+            SET_R2 <= 1'b1;
+            SET_R3 <= 1'b1;
+            end
+            4'b1111: begin
+            SET_R1 <= 1'b1;
+            SET_R2 <= 1'b1;
+            SET_R3 <= 1'b1;
+            SET_R4 <= 1'b1;
+            end                                                                                                                                                        
+        endcase
+    end
+
+      always @(RSel,O1Sel,O2Sel,FunSel) begin
+        case (TSel)
+            4'b0000: begin 
+            end
+            4'b0001: begin
+            SET_T4 <= 1'b1;
+            end
+            4'b0010: begin
+            SET_T3 <= 1'b1;
+            end
+            4'b0011: begin
+            SET_T3 <= 1'b1;
+            SET_T4 <= 1'b1;
+            end
+            4'b0100: begin
+            SET_T2 <= 1'b1;
+            end
+            4'b0101: begin
+            SET_T2 <= 1'b1;
+            SET_T4 <= 1'b1;
+            end
+            4'b0110: begin
+            SET_T2 <= 1'b1;
+            SET_T3 <= 1'b1;
+            end
+            4'b0111: begin
+            SET_T2 <= 1'b1;
+            SET_T3 <= 1'b1;
+            SET_T4 <= 1'b1;
+            end       
+            4'b1000: begin 
+            SET_T1 <= 1'b1;
+            end
+            4'b1001: begin
+            SET_T1 <= 1'b1;
+            SET_T4 <= 1'b1;
+            end
+            4'b1010: begin
+            SET_T1 <= 1'b1;
+            SET_T3 <= 1'b1;
+            end
+            4'b1011: begin
+            SET_T1 <= 1'b1;
+            SET_T3 <= 1'b1;
+            SET_T4 <= 1'b1;
+            end
+            4'b1100: begin
+            SET_T1 <= 1'b1;
+            SET_T2 <= 1'b1;
+            end
+            4'b1101: begin
+            SET_T1 <= 1'b1;
+            SET_T2 <= 1'b1;
+            SET_T4 <= 1'b1;
+            end
+            4'b1110: begin
+            SET_T1 <= 1'b1;
+            SET_T2 <= 1'b1;
+            SET_T3 <= 1'b1;
+            end
+            4'b1111: begin
+            SET_T1 <= 1'b1;
+            SET_T2 <= 1'b1;
+            SET_T3 <= 1'b1;
+            SET_T4 <= 1'b1;
+            end                                                                                                                                                        
+        endcase
+    end
 
     always @(posedge SET_R1) begin
             

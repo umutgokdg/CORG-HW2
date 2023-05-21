@@ -113,7 +113,7 @@ module ALU_System(
     assign ARF_COut = arf1.OutA; // pass
     assign Address = arf1.OutB;
     assign MemoryOut = mem1.o;
-    assign IROut = ir1.IROut[15:8];
+    assign IROut = ir1.IROut[15:0];
     assign MuxAOut = MuxA.out;
     assign MuxBOut = MuxB.out;
     assign MuxCOut = MuxC.out;

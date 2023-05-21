@@ -167,7 +167,7 @@ module RF(
     end
     
     always @(negedge SET_R1) begin
-        $display("R1 = %x", R1);
+        $display("R1 = %h", R1);
     end
 
 

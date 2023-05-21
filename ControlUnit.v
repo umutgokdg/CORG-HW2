@@ -100,51 +100,48 @@ always @(posedge clock) begin
     seq_counter <= seq_counter + 1;
     $display("*******************");
     $display("SEQ = %d", seq_counter);
-    $display("Address = %x", Address);
-    $display("IROut = %x", IROut);
-    $display("IRFunsel = %x", IR_Funsel);
-    $display("IR_LH = %x", IR_LH);
-    $display("IR_Enable = %x", IR_Enable);
-    $display("MemoryOut = %x", MemoryOut);
+    $display("Address = %h", Address);
+    $display("IROut = %h", IROut);
+    $display("IRFunsel = %h", IR_Funsel);
+    $display("IR_LH = %h", IR_LH);
+    $display("IR_Enable = %h", IR_Enable);
+    $display("MemoryOut = %h", MemoryOut);
     $display("*******************");
-
 end
 
 always @(seq_counter) begin
         // Set default values for all control signals   
-    reg_ARF_FunSel = 2'bX;
-    reg_ARF_RegSel = 4'bX;
-    reg_IR_LH = 1'bX;
-    reg_IR_Enable = 1'bX;
-    reg_Mem_WR = 1'b0;
-    reg_Mem_CS = 1'b0;
-    reg_RF_FunSel = 2'bX;
-    reg_ALU_FunSel = 4'bX;
-    reg_IR_Funsel = 2'bX;
+    reg_ARF_FunSel <= 2'bX;
+    reg_ARF_RegSel <= 4'bX;
+    reg_IR_Enable <= 1'b0;
+    reg_Mem_WR <= 1'b0;
+    reg_Mem_CS <= 1'b0;
+    reg_RF_FunSel <= 2'bX;
+    reg_ALU_FunSel <= 4'bX;
+    reg_IR_Funsel <= 2'bX;
     
     SREGA = (SREG1 > SREG2) ? SREG1 : SREG2;
     SREGB = (SREG1 > SREG2) ? SREG2 : SREG1;
 
     if (seq_counter == 4'b0000) begin // T0: AR <- PC // pc = 0
-        reg_ARF_OutDSel <= 2'b11; // PC
-        reg_IR_LH <= 0;
         reg_IR_Enable <= 1; // read before increment problem
+        reg_IR_LH <= 0;
+        reg_ARF_OutDSel <= 2'b11; // PC
         #4;
         reg_IR_Funsel = 2'b01;
-        reg_IR_LH = 1;
 
     end
 
     else if (seq_counter == 4'b0001) begin // T1: AR <- PC  // pc = 1
   
         reg_IR_Enable <= 1;
+        reg_IR_LH <= 1;
         #1;
         reg_IR_Funsel = 2'b01;
 
         reg_ARF_FunSel <= 2'b11; // INC
         reg_ARF_RegSel <= 4'b1000; // PC
         reg_ARF_OutDSel <= 2'b11; // OUTB
-        reg_IR_LH = 1;
 
     end
 

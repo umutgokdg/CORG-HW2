@@ -32,6 +32,7 @@ module ALU_System(
     output [7:0] ALUOut,
     output [3:0] ALUOutFlag,
     output [7:0] ARF_COut,     // pass
+    output [7:0] ARF_DOut,
     output [7:0] Address,
     output [7:0] MemoryOut,
     output [15:0] IROut,

@@ -97,11 +97,20 @@ reg [3:0] seq_counter = 0;
 assign seq = seq_counter;
 always @(posedge clock) begin
     seq_counter <= seq_counter + 1;
+    $display("*******************");
+    $display("SEQ = %d", seq_counter);
+    $display("Address = %x", Address);
+    $display("IROut = %x", IROut);
+    $display("IRFunsel = %x", IR_Funsel);
+    $display("IR_LH = %x", IR_LH);
+    $display("IR_Enable = %x", IR_Enable);
+    $display("MemoryOut = %x", MemoryOut);
+    $display("*******************");
+
 end
 
 always @(seq_counter) begin
-        // Set default values for all control signals
-        
+        // Set default values for all control signals   
     reg_RF_OutASel = 3'bX;
     reg_RF_OutBSel = 3'bX;
     reg_RF_RSel = 4'bX;
@@ -120,14 +129,11 @@ always @(seq_counter) begin
 
 
 
-
     
     SREGA = (SREG1 > SREG2) ? SREG1 : SREG2;
     SREGB = (SREG1 > SREG2) ? SREG2 : SREG1;
 
     if (seq_counter == 4'b0000) begin // T0: AR <- PC // pc = 0
-        reg_ARF_FunSel = 2'b11; // INC
-        reg_ARF_RegSel = 4'b1000; // PC
         reg_ARF_OutDSel = 2'b11; // PC
         reg_IR_LH = 0;
         reg_IR_Enable = 1; // read before increment problem
@@ -307,6 +313,8 @@ always @(seq_counter) begin
             end
             4'b1100 : begin //LD
                 if (seq_counter == 4'b0010) begin //
+                    reg_ARF_FunSel = 2'b11; // INC
+                    reg_ARF_RegSel = 4'b1000; // PC
                     if (ADDRESSING_MODE) begin //DIRECT 
                         reg_ARF_OutDSel <= 2'b00; // AR
                         reg_MuxBSel <= 2'b11; // MEMORY OUT
@@ -315,8 +323,8 @@ always @(seq_counter) begin
                     end
                 end
                 if (seq_counter == 4'b0011) begin //BRA
-                reg_MuxASel = (ADDRESSING_MODE) ? 2'b01 : 2'b10;
-                reg_RF_FunSel = 2'b01; // LOAD
+                    reg_MuxASel = (ADDRESSING_MODE) ? 2'b01 : 2'b10;
+                    reg_RF_FunSel = 2'b01; // LOAD
                     case (RSEL)
                         2'b00 : begin
                             reg_RF_RSel = 4'b1000; //R1

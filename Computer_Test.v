@@ -5,11 +5,17 @@ module Computer_Test (
     
 );
     reg clock;
-    always begin
-        clock = 0; #5;
-        clock = 1; #5;
-    end
+    initial begin
 
+        // Initialize the clock signal
+        clock = 0;
+        // Run the simulation for 5 clock cycles
+        repeat (20) begin
+            #10 clock = ~clock;
+        end
+        // Finish the simulation
+        $finish;
+    end
     ALU_System alu_system1(
         .Clock(clock),
         .RF_OutASel(control1.RF_OutASel),
@@ -29,7 +35,7 @@ module Computer_Test (
         .Mem_CS(control1.Mem_CS),
         .MuxASel(control1.MuxASel),
         .MuxBSel(control1.MuxBSel),
-        .MuxCSel(control1.MuxCSel),
+        .MuxCSel(control1.MuxCSel)
     );
 
     ControlUnit control1(
@@ -44,7 +50,7 @@ module Computer_Test (
         .IROut(alu_system1.IROut),
         .MuxAOut(alu_system1.MuxAOut),
         .MuxBOut(alu_system1.MuxBOut),
-        .MuxCOut(alu_system1.MuxCOut),
+        .MuxCOut(alu_system1.MuxCOut)
     );
 
 

@@ -151,7 +151,6 @@ module RF(
     end
 
     always @(posedge SET_R1) begin
-            
             if (FunSel == 2'b00) begin
                     R1 = 8'd0;
             end
@@ -166,6 +165,11 @@ module RF(
             end  
             SET_R1  <= 1'b0;
     end
+    
+    always @(negedge SET_R1) begin
+        $display("R1 = %x", R1);
+    end
+
 
     always @(posedge SET_R2) begin
             

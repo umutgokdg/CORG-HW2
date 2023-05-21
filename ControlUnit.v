@@ -101,48 +101,56 @@ always @(posedge clock) begin
     $display("*******************");
     $display("SEQ = %d", seq_counter);
     $display("Address = %h", Address);
-    $display("IROut = %h", IROut);
     $display("IRFunsel = %h", IR_Funsel);
     $display("IR_LH = %h", IR_LH);
     $display("IR_Enable = %h", IR_Enable);
     $display("MemoryOut = %h", MemoryOut);
+    $display("IROut = %h", IROut);
+    $display("ALUOut = %h", ALUOut);
+    $display("MuxAOut = %h", MuxAOut);
+    $display("MuxASel = %h", MuxASel);
+    $display("MuxBOut = %h", MuxBOut);
+    $display("MuxBSel = %h", MuxBSel);
+    $display("MuxCOut = %h", MuxCOut);
+    $display("MuxCSel = %h", MuxCSel);
     $display("*******************");
 end
 
 always @(seq_counter) begin
         // Set default values for all control signals   
-    reg_ARF_FunSel <= 2'bX;
-    reg_ARF_RegSel <= 4'bX;
-    reg_IR_Enable <= 1'b0;
-    reg_Mem_WR <= 1'b0;
-    reg_Mem_CS <= 1'b0;
-    reg_RF_FunSel <= 2'bX;
-    reg_ALU_FunSel <= 4'bX;
-    reg_IR_Funsel <= 2'bX;
+    reg_ARF_FunSel = 2'bX;
+    reg_ARF_RegSel = 4'bX;
+    reg_IR_Enable = 1'b0;
+    reg_Mem_WR = 1'b0;
+    reg_Mem_CS = 1'b0;
+    reg_RF_FunSel = 2'bX;
+    reg_ALU_FunSel = 4'bX;
+    reg_IR_Funsel = 2'bX;
     
     SREGA = (SREG1 > SREG2) ? SREG1 : SREG2;
     SREGB = (SREG1 > SREG2) ? SREG2 : SREG1;
 
     if (seq_counter == 4'b0000) begin // T0: AR <- PC // pc = 0
-        reg_IR_Enable <= 1; // read before increment problem
-        reg_IR_LH <= 0;
-        reg_ARF_OutDSel <= 2'b11; // PC
-        #4;
+        
+        reg_IR_Enable = 1; // read before increment problem
+        reg_IR_LH = 0;
+        reg_ARF_OutDSel = 2'b11; // PC
         reg_IR_Funsel = 2'b01;
+        #10;
+        reg_ARF_FunSel = 2'b11; // INC
+        reg_ARF_RegSel = 4'b1000; // PC
 
     end
 
     else if (seq_counter == 4'b0001) begin // T1: AR <- PC  // pc = 1
-  
-        reg_IR_Enable <= 1;
-        reg_IR_LH <= 1;
+        reg_IR_Enable = 1;
+        reg_IR_LH = 1;
         #1;
         reg_IR_Funsel = 2'b01;
 
-        reg_ARF_FunSel <= 2'b11; // INC
-        reg_ARF_RegSel <= 4'b1000; // PC
-        reg_ARF_OutDSel <= 2'b11; // OUTB
-
+        reg_ARF_FunSel = 2'b11; // INC
+        reg_ARF_RegSel = 4'b1000; // PC
+        reg_ARF_OutDSel = 2'b11; // OUTB
     end
 
     else begin 
@@ -302,15 +310,13 @@ always @(seq_counter) begin
             end
             4'b1011 : begin //MOV
                 if (seq_counter == 4'b0010) begin
-                    update_SREGB_flag = 1;
-                    reg_ALU_FunSel = 4'b0001;
+                    update_SREGA_flag = 1;
+                    reg_ALU_FunSel = 4'b0000;
                     update_DSTREG_flag = 1;
                 end
             end
             4'b1100 : begin //LD
                 if (seq_counter == 4'b0010) begin //
-                    reg_ARF_FunSel = 2'b11; // INC
-                    reg_ARF_RegSel = 4'b1000; // PC
                     if (ADDRESSING_MODE) begin //DIRECT 
                         reg_ARF_OutDSel <= 2'b00; // AR
                         reg_MuxBSel <= 2'b11; // MEMORY OUT
@@ -471,12 +477,21 @@ always @(posedge update_SREGB_flag) begin
     update_SREGB_flag <= 0;
 end
 
-always @(posedge update_DSTREG_flag) begin 
-    reg_MuxASel = (DSTREG < 4'd4) ? 0 : 2'bX;
-    reg_RF_FunSel = (DSTREG < 4'd4) ? 2'b01 : 2'bX;
+always @(posedge update_DSTREG_flag) begin
 
-    reg_MuxBSel = (DSTREG < 4'd4) ? 2'bX : 0;
+    if (DSTREG < 4'd4) begin
+        reg_MuxASel = 0;
+    end else begin
+        reg_MuxBSel = 0;
+    end
+
+    reg_RF_FunSel = (DSTREG < 4'd4) ? 2'b01 : 2'bX;
     reg_ARF_FunSel = (DSTREG < 4'd4) ? 2'bX : 2'b01;
+
+    $display("DSTREG: %d", DSTREG);
+    $display("reg_RF_FunSel: %d", reg_RF_FunSel);
+    $display("reg_ARF_FunSel: %d", reg_ARF_FunSel);
+
     case(DSTREG)
         4'b0000 : begin 
             reg_RF_RSel = 4'b1000;

@@ -87,23 +87,20 @@ module ALU_System(
     .input_2(mem1.o),
     .input_3(ir1.IROut[7:0]),
     .input_4(arf1.OutA),
-    .select(MuxASel),
-    .out(MuxAOut)
+    .select(MuxASel)
     );
     MUX_4bit MuxB(
     .input_1(alu1.OutALU), // ALUOut
     .input_2(mem1.o),
     .input_3(ir1.IROut[7:0]),
     .input_4(arf1.OutA),
-    .select(MuxBSel),
-    .out(MuxBOut)
+    .select(MuxBSel)
     );
     
     MUX_2bit MuxC(
     .input_1(rf1.Output1), // ALUOut
     .input_2(arf1.OutA),
-    .select(MuxCSel),
-    .out(MuxCOut)
+    .select(MuxCSel)
     );
     
     assign AOut = rf1.Output1; // MuxC output olarak da degisebilir

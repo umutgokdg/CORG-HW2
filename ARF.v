@@ -8,7 +8,10 @@ module ARF(
      output reg [7:0] OutA,
      output reg [7:0] OutB
      );
-     reg [7:0] PC, AR, SP, PCpast;
+     reg [7:0] PC = 0;
+     reg [7:0] AR = 0;
+     reg [7:0] SP = 0;
+     reg [7:0] PCpast = 0;
 
      reg SET_AR, SET_SP, SET_PC, SET_PCPAST;
 

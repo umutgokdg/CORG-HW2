@@ -1,3 +1,12 @@
+`include "ALU.v"
+`include "Memory.v"
+`include "IR.v"
+`include "ARF.v"
+`include "RF.v"
+`include "MUX_4bit.v"
+`include "MUX_2bit.v"
+
+
 module ALU_System(
     input [2:0] RF_OutASel, // pass
     input [2:0] RF_OutBSel, // pass

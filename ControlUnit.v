@@ -1,4 +1,5 @@
 module ControlUnit(
+    input clock,
     input [7:0] AOut,
     input [7:0] BOut,
     input [7:0] ALUOut,
@@ -27,8 +28,7 @@ module ControlUnit(
     output Mem_CS,
     output [1:0] MuxASel,
     output [1:0] MuxBSel,
-    output MuxCSel,
-    output clock
+    output MuxCSel
 );
 
 reg [2:0] reg_RF_OutASel;

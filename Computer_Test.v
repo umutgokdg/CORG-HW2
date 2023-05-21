@@ -1,3 +1,4 @@
+ `timescale 1ns / 1ps
 `include "ALU_System.v"
 `include "ControlUnit.v"
 

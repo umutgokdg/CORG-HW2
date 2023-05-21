@@ -12,7 +12,7 @@ module Memory(
     initial $readmemh("RAM.mem", RAM_DATA);
     //Read the selected data from RAM
     always @(*) begin
-        o = ~wr && ~cs ? RAM_DATA[address] : 8'hZ;
+        o <= ~wr && ~cs ? RAM_DATA[address] : 8'hZ;
     end
     
     //Write the data to RAM

@@ -1,3 +1,4 @@
+ `timescale 1ns / 1ps
 module ControlUnit(
     input clock,
     input [7:0] AOut,
@@ -111,42 +112,40 @@ end
 
 always @(seq_counter) begin
         // Set default values for all control signals   
-    reg_RF_OutASel = 3'bX;
-    reg_RF_OutBSel = 3'bX;
-    reg_RF_RSel = 4'bX;
-    reg_RF_TSel = 4'bX;
-    reg_ARF_OutCSel = 2'bX;
-    reg_ARF_OutDSel = 2'bX;
     reg_ARF_FunSel = 2'bX;
     reg_ARF_RegSel = 4'bX;
     reg_IR_LH = 1'bX;
     reg_IR_Enable = 1'bX;
-    reg_Mem_WR = 1'bX;
+    reg_Mem_WR = 1'b0;
     reg_Mem_CS = 1'b0;
     reg_RF_FunSel = 2'bX;
     reg_ALU_FunSel = 4'bX;
     reg_IR_Funsel = 2'bX;
-
-
-
     
     SREGA = (SREG1 > SREG2) ? SREG1 : SREG2;
     SREGB = (SREG1 > SREG2) ? SREG2 : SREG1;
 
     if (seq_counter == 4'b0000) begin // T0: AR <- PC // pc = 0
-        reg_ARF_OutDSel = 2'b11; // PC
-        reg_IR_LH = 0;
-        reg_IR_Enable = 1; // read before increment problem
+        reg_ARF_OutDSel <= 2'b11; // PC
+        reg_IR_LH <= 0;
+        reg_IR_Enable <= 1; // read before increment problem
+        #4;
         reg_IR_Funsel = 2'b01;
+        reg_IR_LH = 1;
+
     end
 
     else if (seq_counter == 4'b0001) begin // T1: AR <- PC  // pc = 1
-        reg_ARF_FunSel = 2'b11; // INC
-        reg_ARF_RegSel = 4'b1000; // PC
-        reg_ARF_OutDSel = 2'b11; // OUTB
-        reg_IR_LH = 1;
-        reg_IR_Enable = 1;
+  
+        reg_IR_Enable <= 1;
+        #1;
         reg_IR_Funsel = 2'b01;
+
+        reg_ARF_FunSel <= 2'b11; // INC
+        reg_ARF_RegSel <= 4'b1000; // PC
+        reg_ARF_OutDSel <= 2'b11; // OUTB
+        reg_IR_LH = 1;
+
     end
 
     else begin 

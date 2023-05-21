@@ -5,9 +5,8 @@ module IR (
     input LH,
     output [15:0] IROut
     );
-    reg [15:0] complete_IR;
-    assign IROut = complete_IR;
-    always @(LH, Input, FunSel, E) begin
+    reg [15:0] complete_IR = 16'd0;
+    always @(*) begin
         if (E == 1) begin
                 if (FunSel == 2'b00) begin
                     complete_IR <= 16'd0;
@@ -32,4 +31,6 @@ module IR (
         $display("complete high: %d", complete_IR[15:8]);
         $display("complete low: %d", complete_IR[7:0]);*/
     end
+        assign IROut = complete_IR;
+
 endmodule

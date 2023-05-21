@@ -1,3 +1,4 @@
+ `timescale 1ns / 1ps
 `include "ALU.v"
 `include "Memory.v"
 `include "IR.v"

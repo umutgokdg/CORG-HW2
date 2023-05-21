@@ -9,7 +9,7 @@ input wire [3:0] FunSel;
 output wire [7:0] OutALU;
 output wire [3:0] OutFlag;
 
-reg [8:0] result;
+reg [8:0] result = 0;
 
 reg ZERO = 1'bX;
 reg SET_ZERO;
@@ -23,7 +23,7 @@ reg SET_OVERFLOW;
 //OVERFLOW SHOULD BE CALLED BEFORE CARRY
 
 always @(A,B,FunSel,Clock) begin
-    result  <= 9'b0;
+    
     case (FunSel) 
         4'b0000: begin // A 
             result <= A; // A 

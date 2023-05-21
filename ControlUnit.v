@@ -113,6 +113,10 @@ always @(posedge clock) begin
     $display("MuxBSel = %h", MuxBSel);
     $display("MuxCOut = %h", MuxCOut);
     $display("MuxCSel = %h", MuxCSel);
+    $display("ARF_FunSel = %h", ARF_FunSel);
+    $display("ARF_RegSel = %h", ARF_RegSel);
+    $display("ARF_OutCSel = %h", ARF_OutCSel);
+    $display("ARF_OutDSel = %h", ARF_OutDSel);
     $display("*******************");
 end
 

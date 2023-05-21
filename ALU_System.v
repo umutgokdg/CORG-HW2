@@ -115,5 +115,19 @@ module ALU_System(
     assign MuxBOut = MuxB.out;
     assign MuxCOut = MuxC.out;
     
-    
+    always @(*) begin
+        $display("MUXB.OUT = %b", MuxB.out);
+        $display("MuxBSel = %b", MuxBSel);
+        $display("OutALU = %b", alu1.OutALU);
+        /*
+            PRİNT
+            A(MuxC.out),
+    .B(rf1.Output1),
+    .FunSel(ALU_FunSel)
+        */
+        $display("A = %b", MuxC.out);
+        $display("B = %b", rf1.Output1);
+        $display("FunSel = %b", ALU_FunSel);
+        
+    end
 endmodule

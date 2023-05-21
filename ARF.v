@@ -135,6 +135,7 @@ module ARF(
                PC = 8'd0;
           end
           else if (FunSel == 2'b01) begin
+               $display("PC Input = %d", Input);
                PC = Input;
           end
           else if (FunSel == 2'b10) begin

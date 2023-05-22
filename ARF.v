@@ -115,6 +115,7 @@ module ARF(
           end 
           SET_SP  <= 1'b0; 
      end
+
      always @( posedge SET_PCPAST) begin
           if (FunSel == 2'b00) begin
                PCpast = 8'd0;
@@ -135,7 +136,6 @@ module ARF(
                PC = 8'd0;
           end
           else if (FunSel == 2'b01) begin
-               $display("PC Input = %d", Input);
                PC = Input;
           end
           else if (FunSel == 2'b10) begin
@@ -163,6 +163,10 @@ module ARF(
                2'b10: OutB = PCpast;
                2'b11: OutB = PC;
           endcase
+     end
+
+     always @(PC, AR, SP, PCpast) begin
+          $display("Change in ARF:\nPC = %d, AR = %d, SP = %d, PCpast = %d", PC, AR, SP, PCpast);
      end
 
 endmodule

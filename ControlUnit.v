@@ -128,7 +128,6 @@ always @(seq_counter) begin
     reg_Mem_WR = 1'b0;
     reg_Mem_CS = 1'b0;
     reg_RF_FunSel = 2'bX;
-    reg_ALU_FunSel = 4'bX;
     reg_IR_Funsel = 2'bX;
     
     SREGA = (SREG1 > SREG2) ? SREG1 : SREG2;
@@ -151,12 +150,12 @@ always @(seq_counter) begin
         reg_IR_LH = 1;
         #1;
         reg_IR_Funsel = 2'b01;
-
         reg_ARF_FunSel = 2'b11; // INC
         reg_ARF_RegSel = 4'b1000; // PC
         reg_ARF_OutDSel = 2'b11; // OUTB
     end
-
+// 0010 0010
+// 0000 0111
     else begin 
         case(OPCODE)
             4'b0000 : begin //AND
@@ -164,7 +163,7 @@ always @(seq_counter) begin
                     update_SREGA_flag = 1;
                     update_SREGB_flag = 1;
                     reg_ALU_FunSel = 4'b0111;
-                    //t3
+                    #5;
                     update_DSTREG_flag = 1;
                 end
             end
@@ -231,15 +230,17 @@ always @(seq_counter) begin
                     else begin
                         reg_RF_FunSel = 2'b11;
                     end
+                    reg_ALU_FunSel = 4'b0000; 
                 end
                 if (seq_counter == 4'b0011) begin // T2: RF <- RF + 1
                     SREGA = SREG1;
                     update_SREGA_flag = 1;
-                    reg_ALU_FunSel = 4'b0000; 
                     //t3
-                    update_DSTREG_flag = 0;
+                    #5;
+                    update_DSTREG_flag = 1;
                 end
-                if (seq_counter == 4'b0100) begin
+                
+                if (seq_counter == 4'b0101) begin
                     update_SREG1_flag = 1;
                     if(SREG1 > 4'd3) begin
                         reg_ARF_FunSel = 2'b10; // DEC
@@ -253,18 +254,20 @@ always @(seq_counter) begin
                 if (seq_counter == 4'b0010) begin
                     update_SREG1_flag = 1;
                     if(SREG1 > 4'd3) begin
-                        reg_ARF_FunSel = 2'b01; // DEC
+                        reg_ARF_FunSel = 2'b10; // DEC
                     end
                     else begin
-                        reg_RF_FunSel = 2'b01;
+                        reg_RF_FunSel = 2'b10;
                     end
+                    reg_ALU_FunSel = 4'b0000;
+
                 end
                 if (seq_counter == 4'b0011) begin // T2: RF <- RF + 1
                     SREGA = SREG1;
                     update_SREGA_flag = 1;
-                    reg_ALU_FunSel = 4'b0000;
                     //t3
-                    update_DSTREG_flag = 0;
+                    #5;
+                    update_DSTREG_flag = 1;
                 end
                 if (seq_counter == 4'b0100) begin
                     update_SREG1_flag = 1;
@@ -316,6 +319,8 @@ always @(seq_counter) begin
                 if (seq_counter == 4'b0010) begin
                     update_SREGA_flag = 1;
                     reg_ALU_FunSel = 4'b0000;
+                end
+                else if (seq_counter == 4'b0011) begin
                     update_DSTREG_flag = 1;
                 end
             end

@@ -1,4 +1,4 @@
- `timescale 1ns / 1ps
+`timescale 1ns / 1ps
 `include "ALU_System.v"
 `include "ControlUnit.v"
 
@@ -11,7 +11,7 @@ module Computer_Test (
         // Initialize the clock signal
         clock = 0;
         // Run the simulation for 5 clock cycles
-        repeat (60) begin
+        repeat (120) begin
             #10 clock = ~clock;
         end
         // Finish the simulation

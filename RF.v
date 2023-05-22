@@ -221,6 +221,9 @@ module RF(
         end  
         SET_R4 <= 1'b0;
     end
+    always @(negedge SET_R4) begin
+        $display("R4 = %h", R4);
+    end
 
     always @(posedge SET_T1) begin
             
@@ -315,4 +318,7 @@ module RF(
             3'b111: Output2 = R4;
         endcase
     end
+    always @(R1, R2, R3, R4) begin
+          $display("Change in RF: R1 = %h R2 = %h R3 = %h R4 = %h", R1, R2, R3, R4);
+     end
 endmodule

@@ -107,6 +107,7 @@ always @(posedge clock) begin
     $display("MemoryOut = %h", MemoryOut);
     $display("IROut = %h", IROut);
     $display("ALUOut = %h", ALUOut);
+    $display("ALUOutFlag = %b", ALUOutFlag);
     $display("MuxAOut = %h", MuxAOut);
     $display("MuxASel = %h", MuxASel);
     $display("MuxBOut = %h", MuxBOut);
@@ -163,7 +164,6 @@ always @(seq_counter) begin
                     update_SREGA_flag = 1;
                     update_SREGB_flag = 1;
                     reg_ALU_FunSel = 4'b0111;
-                    #5;
                     update_DSTREG_flag = 1;
                 end
             end
@@ -236,7 +236,6 @@ always @(seq_counter) begin
                     SREGA = SREG1;
                     update_SREGA_flag = 1;
                     //t3
-                    #5;
                     update_DSTREG_flag = 1;
                 end
                 
@@ -266,7 +265,6 @@ always @(seq_counter) begin
                     SREGA = SREG1;
                     update_SREGA_flag = 1;
                     //t3
-                    #5;
                     update_DSTREG_flag = 1;
                 end
                 if (seq_counter == 4'b0100) begin
@@ -280,7 +278,6 @@ always @(seq_counter) begin
                 end
             end
             4'b1001 : begin //BRA
-            //CALCULATE VALUE
                 if (seq_counter == 4'b0010) begin //
                     if (ADDRESSING_MODE) begin //DIRECT 
                         reg_ARF_OutDSel <= 2'b00; // AR
@@ -353,11 +350,13 @@ always @(seq_counter) begin
                 end
             end
             4'b1101 : begin //ST
-                if (seq_counter == 4'b0010) begin //
+                if (seq_counter == 4'b0010) begin // AR <- IR(7-0)
                     reg_ARF_OutDSel <= 2'b00; // AR
+                    #5;
                     reg_MuxBSel <= 2'b11; // MEMORY OUT
                     reg_ARF_FunSel <= 2'b01; // LOAD 
                     reg_ARF_RegSel <= 4'b0100; 
+                    #4;
                 end
                 if (seq_counter == 4'b0011) begin //
                     case (RSEL)
@@ -376,6 +375,8 @@ always @(seq_counter) begin
                     endcase
                 reg_ALU_FunSel = 4'b0001; //Pass B
                 reg_Mem_WR = 1; // write
+                #5;
+
                 end
             end
             4'b1110 : begin //PULL
@@ -496,7 +497,7 @@ always @(posedge update_DSTREG_flag) begin
 
     reg_RF_FunSel = (DSTREG < 4'd4) ? 2'b01 : 2'bX;
     reg_ARF_FunSel = (DSTREG < 4'd4) ? 2'bX : 2'b01;
-
+    #5;
     $display("DSTREG: %d", DSTREG);
     $display("reg_RF_FunSel: %d", reg_RF_FunSel);
     $display("reg_ARF_FunSel: %d", reg_ARF_FunSel);

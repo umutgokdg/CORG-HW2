@@ -118,6 +118,10 @@ always @(posedge clock) begin
     $display("ARF_RegSel = %h", ARF_RegSel);
     $display("ARF_OutCSel = %h", ARF_OutCSel);
     $display("ARF_OutDSel = %h", ARF_OutDSel);
+    $display("RF_FunSel = %h", RF_FunSel);
+    $display("RF_RSel = %h", RF_RSel);
+    $display("RF_OutASel = %h", RF_OutASel);
+    $display("RF_OutBSel = %h", RF_OutBSel);
     $display("*******************");
 end
 
@@ -196,6 +200,8 @@ always @(seq_counter) begin
             end
             4'b0100 : begin //SUB
                 if (seq_counter == 4'b0010) begin // T2: RF <- RF - RF
+                    //SREGA = SREG1;
+                    //SREGB = SREG2;
                     update_SREGA_flag = 1;
                     update_SREGB_flag = 1;
                     reg_ALU_FunSel = 4'b0101;
@@ -379,15 +385,10 @@ always @(seq_counter) begin
 
                 end
             end
-            4'b1110 : begin //PULL
+            4'b1110 : begin //PULL               
                 if (seq_counter == 4'b0010) begin //
-                    reg_ARF_RegSel = 4'b0010; //SP
-                    reg_ARF_FunSel = 2'b11; // INC
-                end
-                if (seq_counter == 4'b0011) begin //
                     reg_ARF_OutDSel = 2'b01;
                     reg_MuxASel = 2'b01; // SP
-                    reg_RF_FunSel = 2'b01; // LOAD
                     case (RSEL)
                         2'b00 : begin
                             reg_RF_RSel = 4'b1000; //R1
@@ -402,6 +403,11 @@ always @(seq_counter) begin
                             reg_RF_RSel = 4'b0001; //R4
                         end
                     endcase
+                end
+                if (seq_counter == 4'b0011) begin //
+                    reg_RF_FunSel = 2'b01; // LOAD
+                    reg_ARF_RegSel = 4'b0010; //SP
+                    reg_ARF_FunSel = 2'b11; // INC
                 end
             end
             4'b1111 : begin //PUSH

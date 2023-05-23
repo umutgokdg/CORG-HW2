@@ -22,8 +22,12 @@ reg SET_OVERFLOW;
 
 //OVERFLOW SHOULD BE CALLED BEFORE CARRY
 
+always @(FunSel) begin
+    #4;
+    $display("ALU OPERATION A = %x, B = %x, Result = %x, FunSel = %x", A, B, result[7:0], FunSel);
+end
+
 always @(A,B,FunSel,Clock) begin
-    
     case (FunSel) 
         4'b0000: begin // A 
             result <= A; // A 
@@ -53,7 +57,7 @@ always @(A,B,FunSel,Clock) begin
             SET_CARRY <= 1'b1;
         end
         4'b0101: begin // A - B
-            result <= A - B ; // A - 
+            result <= A - B ;#1;
             SET_ZERO <= 1'b1; 
             SET_NEGATIVE <= 1'b1;
             SET_OVERFLOW <= 1'b1;

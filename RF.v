@@ -319,6 +319,6 @@ module RF(
         endcase
     end
     always @(R1, R2, R3, R4) begin
-          $display("Change in RF: R1 = %h R2 = %h R3 = %h R4 = %h", R1, R2, R3, R4);
+          $display("Change in RF: R1 = %b R2 = %b R3 = %b R4 = %b", R1, R2, R3, R4);
      end
 endmodule

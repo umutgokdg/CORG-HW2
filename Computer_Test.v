@@ -11,7 +11,7 @@ module Computer_Test (
         // Initialize the clock signal
         clock = 0;
         // Run the simulation for 5 clock cycles
-        repeat (300) begin
+        repeat (360) begin
             #10 clock = ~clock;
         end
         // Finish the simulation

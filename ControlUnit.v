@@ -139,7 +139,6 @@ always @(seq_counter) begin
     SREGB = (SREG1 > SREG2) ? SREG2 : SREG1;
 
     if (seq_counter == 4'b0000) begin // T0: AR <- PC // pc = 0
-        
         reg_IR_Enable = 1; // read before increment problem
         reg_IR_LH = 0;
         reg_ARF_OutDSel = 2'b11; // PC
@@ -159,8 +158,7 @@ always @(seq_counter) begin
         reg_ARF_RegSel = 4'b1000; // PC
         reg_ARF_OutDSel = 2'b11; // OUTB
     end
-// 0010 0010
-// 0000 0111
+
     else begin 
         case(OPCODE)
             4'b0000 : begin //AND
@@ -168,6 +166,8 @@ always @(seq_counter) begin
                     update_SREGA_flag = 1;
                     update_SREGB_flag = 1;
                     reg_ALU_FunSel = 4'b0111;
+                end
+                if (seq_counter == 4'b0011) begin // T3: RF <- RF & RF
                     update_DSTREG_flag = 1;
                 end
             end
@@ -200,10 +200,12 @@ always @(seq_counter) begin
             end
             4'b0100 : begin //SUB
                 if (seq_counter == 4'b0010) begin // T2: RF <- RF - RF
-                    //SREGA = SREG1;
-                    //SREGB = SREG2;
+                    SREGA = SREG1;
+                    SREGB = SREG2;
+                    #2;
                     update_SREGA_flag = 1;
                     update_SREGB_flag = 1;
+                    #2;
                     reg_ALU_FunSel = 4'b0101;
                     //t3
                     update_DSTREG_flag = 1;
@@ -446,7 +448,6 @@ reg update_DSTREG_flag;
 
 always @(posedge update_SREGA_flag) begin
     reg_MuxCSel = (SREGA > 4'd3) ? 1 : 0;
-
     case(SREGA)
         4'b0000 : begin 
             reg_RF_OutASel = 3'b100;
@@ -492,6 +493,7 @@ always @(posedge update_SREGB_flag) begin
     endcase
     update_SREGB_flag <= 0;
 end
+
 
 always @(posedge update_DSTREG_flag) begin
 

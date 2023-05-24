@@ -279,14 +279,26 @@ always @(seq_counter) begin
                 end
             end
             4'b1010 : begin //BNE
-               if (seq_counter == 4'b0010 && ALUOutFlag[0] == 0) begin //BNE
-                    reg_MuxBSel = 2'b10;
-                    reg_ARF_RegSel = 4'b1000; //PC
-                    reg_ARF_FunSel = 2'b01; // LOAD
-                    #5;
-                    reg_ARF_RegSel = 4'b1000; //PC
-                    reg_ARF_FunSel = 2'b10; // DEC
-                    seq_counter = 4'hff;
+                if (seq_counter == 4'b0010) begin //BNE
+                    if(ALUOutFlag == 4'd8) begin
+                        $display("BNE alu 1");
+                        $display("ALUOUT = %d", ALUOut);
+                        $display("ALUFLAG = %d", ALUOutFlag);
+                    end
+                    else begin 
+                        $display("BNE alu 0");
+                        $display("ALUOUT = %d", ALUOut);
+                        $display("ALUFLAG = %d", ALUOutFlag);
+                        reg_MuxBSel = 2'b10;
+                        reg_ARF_RegSel = 4'b1000; //PC
+                        reg_ARF_FunSel = 2'b01; // LOAD
+                        #5;
+                        reg_ARF_RegSel = 4'b1000; //PC
+                        reg_ARF_FunSel = 2'b10; // DEC
+                        seq_counter = 4'hff;
+                    end
+
+                    
                 end
 
             end

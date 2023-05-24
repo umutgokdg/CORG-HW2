@@ -488,7 +488,8 @@ module CPUSystem(
         .IROut(alu_system1.IROut),
         .MuxAOut(alu_system1.MuxAOut),
         .MuxBOut(alu_system1.MuxBOut),
-        .MuxCOut(alu_system1.MuxCOut)
+        .MuxCOut(alu_system1.MuxCOut),
+        .T(T)
     );
 endmodule
 
@@ -522,7 +523,8 @@ module ControlUnit(
     output Mem_CS,
     output [1:0] MuxASel,
     output [1:0] MuxBSel,
-    output MuxCSel
+    output MuxCSel,
+    input [7:0] T
     );
 
     reg [2:0] reg_RF_OutASel;
@@ -592,9 +594,27 @@ module ControlUnit(
 
     reg initial_cycle = 0;
     always @(posedge clock) begin
-        seq_counter <= seq_counter + 1;
+        //if t is not X make seq_counter = T else seq_counter = seq_counter + 1
+        if (T) begin
+            $display("!T = %b", T);
+            case (T)
+                8'b00000001: seq_counter <= 2'b00;
+                8'b00000010: seq_counter <= 2'b01;
+                8'b00000100: seq_counter <= 2'b10;
+                8'b00001000: seq_counter <= 2'b11;
+                8'b00010000: seq_counter <= 2'bxx;
+                8'b00100000: seq_counter <= 2'bxx;
+                8'b01000000: seq_counter <= 2'bxx;
+                8'b10000000: seq_counter <= 2'bxx;
+                default: seq_counter <= 2'bxx;
+            endcase
+        end else begin
+            seq_counter <= seq_counter + 1;
+        end
         initial_cycle <= 1;
         $display("*******************");
+        $display("T = %b", T);
+
         $display("SEQ = %d", seq_counter);
         $display("Address = %h", Address);
         $display("IRFunsel = %h", IR_Funsel);
@@ -623,7 +643,7 @@ module ControlUnit(
 
     always @(seq_counter) begin
 
-            // Set default values for all control signals   
+        // Set default values for all control signals   
         reg_ARF_FunSel = 2'bX;
         reg_ARF_RegSel = 4'bX;
         reg_IR_Enable = 1'b0;

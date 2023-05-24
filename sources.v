@@ -589,8 +589,11 @@ module ControlUnit(
 
     reg [1:0] seq_counter = 0;
     assign seq = seq_counter;
+
+    reg initial_cycle = 0;
     always @(posedge clock) begin
         seq_counter <= seq_counter + 1;
+        initial_cycle <= 1;
         $display("*******************");
         $display("SEQ = %d", seq_counter);
         $display("Address = %h", Address);
@@ -619,6 +622,7 @@ module ControlUnit(
     end
 
     always @(seq_counter) begin
+
             // Set default values for all control signals   
         reg_ARF_FunSel = 2'bX;
         reg_ARF_RegSel = 4'bX;
@@ -639,8 +643,10 @@ module ControlUnit(
             reg_ARF_OutDSel = 2'b11; // PC
             reg_IR_Funsel = 2'b01;
             #5;
-            reg_ARF_FunSel = 2'b11; // INC
-            reg_ARF_RegSel = 4'b1000; // PC
+            if (initial_cycle == 1) begin
+                reg_ARF_FunSel = 2'b11; // INC
+                reg_ARF_RegSel = 4'b1000; // PC
+            end
             //print ar and pc
         end
 
@@ -917,7 +923,9 @@ module ControlUnit(
                 end
             endcase
         end
-    end
+        end    
+
+
 
     reg update_ADDRESS_flag;
     reg update_SREGA_flag;

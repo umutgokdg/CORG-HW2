@@ -94,7 +94,7 @@ assign OPCODE = IROut[15:12];
 
 reg [7:0] VALUE;
 
-reg [3:0] seq_counter = 0;
+reg [1:0] seq_counter = 0;
 assign seq = seq_counter;
 always @(posedge clock) begin
     seq_counter <= seq_counter + 1;
@@ -139,7 +139,7 @@ always @(seq_counter) begin
     SREGA = (SREG1 > SREG2) ? SREG1 : SREG2;
     SREGB = (SREG1 > SREG2) ? SREG2 : SREG1;
 
-    if (seq_counter == 4'b0000) begin // T0: AR <- PC // pc = 0
+    if (seq_counter == 2'b00) begin // T0: AR <- PC // pc = 0
         $display("T0 Fetching low");
         reg_IR_Enable = 1; // read before increment problem
         reg_IR_LH = 0;
@@ -151,7 +151,7 @@ always @(seq_counter) begin
         //print ar and pc
     end
 
-    else if (seq_counter == 4'b0001) begin // T1: AR <- PC  // pc = 1
+    else if (seq_counter == 2'b01) begin // T1: AR <- PC  // pc = 1
         $display("T1 Fetching high");
         reg_IR_Enable = 1;
         reg_IR_LH = 1;
@@ -164,17 +164,17 @@ always @(seq_counter) begin
     else begin 
         case(OPCODE)
             4'b0000 : begin //AND
-                if (seq_counter == 4'b0010) begin // T2: RF <- RF & RF
+                if (seq_counter == 2'b10) begin // T2: RF <- RF & RF
                     update_SREGA_flag = 1;
                     update_SREGB_flag = 1;
                 end
-                if (seq_counter == 4'b0011) begin // T3: RF <- RF & RF
+                if (seq_counter == 2'b11) begin // T3: RF <- RF & RF
                     reg_ALU_FunSel = 4'b0111;
                     update_DSTREG_flag = 1;
                 end
             end
             4'b0001 : begin //OR
-                if (seq_counter == 4'b0010) begin // T2: RF <- RF | RF
+                if (seq_counter == 2'b10) begin // T2: RF <- RF | RF
                     update_SREGA_flag = 1;
                     update_SREGB_flag = 1;
                     reg_ALU_FunSel = 4'b1000;
@@ -183,7 +183,7 @@ always @(seq_counter) begin
                 end
             end
             4'b0010 : begin //NOT
-                if (seq_counter == 4'b0010) begin // T2: RF <- RF'
+                if (seq_counter == 2'b10) begin // T2: RF <- RF'
                     SREGA = SREG1;
                     update_SREGA_flag = 1;
                     reg_ALU_FunSel = 4'b0010;
@@ -192,7 +192,7 @@ always @(seq_counter) begin
                 end
             end
             4'b0011 : begin //ADD
-                if (seq_counter == 4'b0010) begin // T2: RF <- RF + RF
+                if (seq_counter == 2'b10) begin // T2: RF <- RF + RF
                     update_SREGA_flag = 1;
                     update_SREGB_flag = 1;
                     reg_ALU_FunSel = 4'b0100;
@@ -201,7 +201,7 @@ always @(seq_counter) begin
                 end
             end
             4'b0100 : begin //SUB
-                if (seq_counter == 4'b0010) begin // T2: RF <- RF - RF
+                if (seq_counter == 2'b10) begin // T2: RF <- RF - RF
                     SREGA = SREG1;
                     SREGB = SREG2;
                     #2;
@@ -214,7 +214,7 @@ always @(seq_counter) begin
                 end
             end
             4'b0101 : begin //LSR
-                if (seq_counter == 4'b0010) begin // T2: RF <- RF + 1
+                if (seq_counter == 2'b10) begin // T2: RF <- RF + 1
                     SREGA = SREG1;
                     update_SREGA_flag = 1;
                     reg_ALU_FunSel = 4'b1100;
@@ -223,7 +223,7 @@ always @(seq_counter) begin
                 end
             end
             4'b0110 : begin //LSL
-                if (seq_counter == 4'b0010) begin // T2: RF <- RF - 1
+                if (seq_counter == 2'b10) begin // T2: RF <- RF - 1
                     SREGA = SREG1;
                     update_SREGA_flag = 1;
                     reg_ALU_FunSel = 4'b1011;
@@ -232,13 +232,13 @@ always @(seq_counter) begin
                 end
             end
             4'b0111 : begin //INC
-                if (seq_counter == 4'b0010) begin
+                if (seq_counter == 2'b10) begin
                     SREGA = SREG1;
                     reg_ALU_FunSel = 4'b0000;
                     update_SREGA_flag = 1;
                     update_DSTREG_flag = 1;
                 end
-                if (seq_counter == 4'b0011) begin // T2: RF <- RF + 1
+                if (seq_counter == 2'b11) begin // T2: RF <- RF + 1
                     update_SREG1_flag = 1;
                     if(SREG1 > 4'd3) begin
                         reg_ARF_FunSel = 2'b11; // INC
@@ -250,13 +250,13 @@ always @(seq_counter) begin
                 #2;
             end
             4'b1000 : begin //DEC
-                if (seq_counter == 4'b0010) begin
+                if (seq_counter == 2'b10) begin
                     SREGA = SREG1;
                     reg_ALU_FunSel = 4'b0000;
                     update_SREGA_flag = 1;
                     update_DSTREG_flag = 1;
                 end
-                if (seq_counter == 4'b0011) begin // T2: RF <- RF + 1
+                if (seq_counter == 2'b11) begin // T2: RF <- RF + 1
                     update_SREG1_flag = 1;
                     if(SREG1 > 4'd3) begin
                         reg_ARF_FunSel = 2'b10; // INC
@@ -268,18 +268,18 @@ always @(seq_counter) begin
                 #2;
             end
             4'b1001 : begin //BRA
-                if (seq_counter == 4'b0010) begin //BRA
+                if (seq_counter == 2'b10) begin //BRA
                     reg_MuxBSel = 2'b10;
                     reg_ARF_RegSel = 4'b1000; //PC
                     reg_ARF_FunSel = 2'b01; // LOAD
                     #5;
                     reg_ARF_RegSel = 4'b1000; //PC
                     reg_ARF_FunSel = 2'b10; // DEC
-                    seq_counter = 4'hff;
+                    //seq_counter = 4'hff;
                 end
             end
             4'b1010 : begin //BNE
-                if (seq_counter == 4'b0010) begin //BNE
+                if (seq_counter == 2'b10) begin //BNE
                     if(ALUOutFlag == 4'd8) begin
                         $display("BNE alu 1");
                         $display("ALUOUT = %d", ALUOut);
@@ -295,7 +295,7 @@ always @(seq_counter) begin
                         #5;
                         reg_ARF_RegSel = 4'b1000; //PC
                         reg_ARF_FunSel = 2'b10; // DEC
-                        seq_counter = 4'hff;
+                        //seq_counter = 4'hff;
                     end
 
                     
@@ -303,25 +303,25 @@ always @(seq_counter) begin
 
             end
             4'b1011 : begin //MOV
-                if (seq_counter == 4'b0010) begin
+                if (seq_counter == 2'b10) begin
                     update_SREGA_flag = 1;
                     reg_ALU_FunSel = 4'b0000;
                 end
-                else if (seq_counter == 4'b0011) begin
+                else if (seq_counter == 2'b11) begin
                     update_DSTREG_flag = 1;
                     #5;
-                    seq_counter = 4'hff;
+                    //seq_counter = 4'hff;
                 end
             end
             4'b1100 : begin //LD
-                if (seq_counter == 4'b0010) begin //
+                if (seq_counter == 2'b10) begin //
                     if (ADDRESSING_MODE) begin //DIRECT 
                         reg_ARF_OutDSel <= 2'b00; // AR
                         //reg_ARF_FunSel <= 2'b01; // LOAD 
                         //reg_ARF_RegSel <= 4'b0100; 
                     end
                 end
-                if (seq_counter == 4'b0011) begin //BRA
+                if (seq_counter == 2'b11) begin //BRA
                     reg_MuxASel = (ADDRESSING_MODE) ? 2'b01 : 2'b10;
                     reg_RF_FunSel = 2'b01; // LOAD
                     case (RSEL)
@@ -339,11 +339,11 @@ always @(seq_counter) begin
                         end
                     endcase
                     #5;
-                    seq_counter <= 4'hff;
+                    //seq_counter <= 4'hff;
                 end
             end
             4'b1101 : begin //ST
-                if (seq_counter == 4'b0010) begin // AR <- IR(7-0)
+                if (seq_counter == 2'b10) begin // AR <- IR(7-0)
                     reg_ARF_OutDSel <= 2'b00; // AR
                     #5;
                     reg_MuxBSel <= 2'b11; // MEMORY OUT
@@ -351,7 +351,7 @@ always @(seq_counter) begin
                     reg_ARF_RegSel <= 4'b0100; 
                     #4;
                 end
-                if (seq_counter == 4'b0011) begin //
+                if (seq_counter == 2'b11) begin //
                     case (RSEL)
                         2'b00 : begin
                             reg_RF_OutBSel = 3'b100; //R1
@@ -373,7 +373,7 @@ always @(seq_counter) begin
                 end
             end
             4'b1110 : begin //PULL               
-                if (seq_counter == 4'b0010) begin //
+                if (seq_counter == 2'b10) begin //
                     reg_ARF_OutDSel = 2'b01;
                     reg_MuxASel = 2'b01; // SP
                     case (RSEL)
@@ -391,14 +391,14 @@ always @(seq_counter) begin
                         end
                     endcase
                 end
-                if (seq_counter == 4'b0011) begin //
+                if (seq_counter == 2'b11) begin //
                     reg_RF_FunSel = 2'b01; // LOAD
                     reg_ARF_RegSel = 4'b0010; //SP
                     reg_ARF_FunSel = 2'b11; // INC
                 end
             end
             4'b1111 : begin //PUSH
-                if (seq_counter == 4'b0010) begin //
+                if (seq_counter == 2'b10) begin //
                     reg_ARF_OutDSel <= 2'b01; // SP
                     case (RSEL)
                         2'b00 : begin
@@ -417,7 +417,7 @@ always @(seq_counter) begin
                 reg_ALU_FunSel = 4'b0001; //Pass B
                 reg_Mem_WR = 1; // write
                 end
-                if (seq_counter == 4'b0011) begin //
+                if (seq_counter == 2'b11) begin //
                     reg_ARF_RegSel = 4'b0010; //SP
                     reg_ARF_FunSel = 2'b10; // DEC
                 end

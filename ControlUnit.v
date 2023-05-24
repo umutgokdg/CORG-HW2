@@ -139,6 +139,7 @@ always @(seq_counter) begin
     SREGB = (SREG1 > SREG2) ? SREG2 : SREG1;
 
     if (seq_counter == 4'b0000) begin // T0: AR <- PC // pc = 0
+        $display("T0 Fetching low");
         reg_IR_Enable = 1; // read before increment problem
         reg_IR_LH = 0;
         reg_ARF_OutDSel = 2'b11; // PC
@@ -146,16 +147,17 @@ always @(seq_counter) begin
         #10;
         reg_ARF_FunSel = 2'b11; // INC
         reg_ARF_RegSel = 4'b1000; // PC
+        //print ar and pc
     end
 
     else if (seq_counter == 4'b0001) begin // T1: AR <- PC  // pc = 1
+        $display("T1 Fetching high");
         reg_IR_Enable = 1;
         reg_IR_LH = 1;
-        #1;
         reg_IR_Funsel = 2'b01;
+        #1;
         reg_ARF_FunSel = 2'b11; // INC
         reg_ARF_RegSel = 4'b1000; // PC
-        reg_ARF_OutDSel = 2'b11; // OUTB
     end
 
     else begin 
@@ -274,7 +276,7 @@ always @(seq_counter) begin
                     //t3
                     update_DSTREG_flag = 1;
                 end
-                if (seq_counter == 4'b0100) begin
+                if (seq_counter == 4'b0101) begin
                     update_SREG1_flag = 1;
                     if(SREG1 > 4'd3) begin
                         reg_ARF_FunSel = 2'b11; // INC
@@ -285,18 +287,14 @@ always @(seq_counter) begin
                 end
             end
             4'b1001 : begin //BRA
-                if (seq_counter == 4'b0010) begin //
-                    if (ADDRESSING_MODE) begin //DIRECT 
-                        reg_ARF_OutDSel <= 2'b00; // AR
-                        reg_MuxBSel <= 2'b11; // MEMORY OUT
-                        reg_ARF_FunSel <= 2'b01; // LOAD 
-                        reg_ARF_RegSel <= 4'b0100; 
-                    end
-                end
-                if (seq_counter == 4'b0011) begin //BRA
-                    reg_MuxBSel = (ADDRESSING_MODE) ? 2'b01 : 2'b10;
+                if (seq_counter == 4'b0010) begin //BRA
+                    reg_MuxBSel = 2'b10;
                     reg_ARF_RegSel = 4'b1000; //PC
                     reg_ARF_FunSel = 2'b01; // LOAD
+                    #5;
+                    reg_ARF_RegSel = 4'b1000; //PC
+                    reg_ARF_FunSel = 2'b10; // DEC
+                    seq_counter = 4'hff;
                 end
             end
             4'b1010 : begin //BNE
@@ -326,15 +324,16 @@ always @(seq_counter) begin
                 end
                 else if (seq_counter == 4'b0011) begin
                     update_DSTREG_flag = 1;
+                    #5;
+                    seq_counter = 4'hff;
                 end
             end
             4'b1100 : begin //LD
                 if (seq_counter == 4'b0010) begin //
                     if (ADDRESSING_MODE) begin //DIRECT 
                         reg_ARF_OutDSel <= 2'b00; // AR
-                        reg_MuxBSel <= 2'b11; // MEMORY OUT
-                        reg_ARF_FunSel <= 2'b01; // LOAD 
-                        reg_ARF_RegSel <= 4'b0100; 
+                        //reg_ARF_FunSel <= 2'b01; // LOAD 
+                        //reg_ARF_RegSel <= 4'b0100; 
                     end
                 end
                 if (seq_counter == 4'b0011) begin //BRA
@@ -354,6 +353,8 @@ always @(seq_counter) begin
                             reg_RF_RSel = 4'b0001; //R4
                         end
                     endcase
+                    #5;
+                    seq_counter <= 4'hff;
                 end
             end
             4'b1101 : begin //ST

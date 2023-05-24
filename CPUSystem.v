@@ -1,24 +1,15 @@
-`timescale 1ns / 1ps
 `include "ALU_System.v"
 `include "ControlUnit.v"
 
-module Computer_Test (
-    
+module CPUSystem (
+    input wire Clock,
+    input wire Reset,
+    input wire [7:0] T
 );
-    reg clock;
-    initial begin
-
-        // Initialize the clock signal
-        clock = 0;
-        // Run the simulation for 5 clock cycles
-        repeat (360) begin
-            #10 clock = ~clock;
-        end
-        // Finish the simulation
-        $finish;
-    end
+    wire real_clock;
+    assign real_clock = !Clock;
     ALU_System alu_system1(
-        .Clock(clock),
+        .Clock(real_clock),
         .RF_OutASel(control1.RF_OutASel),
         .RF_OutBSel(control1.RF_OutBSel),
         .RF_FunSel(control1.RF_FunSel),
@@ -40,7 +31,7 @@ module Computer_Test (
     );
 
     ControlUnit control1(
-        .clock(clock),
+        .clock(real_clock),
         .AOut(alu_system1.AOut),
         .BOut(alu_system1.BOut),
         .ALUOut(alu_system1.ALUOut),

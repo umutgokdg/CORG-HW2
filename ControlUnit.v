@@ -1,4 +1,3 @@
- `timescale 1ns / 1ps
 module ControlUnit(
     input clock,
     input [7:0] AOut,
@@ -145,7 +144,7 @@ always @(seq_counter) begin
         reg_IR_LH = 0;
         reg_ARF_OutDSel = 2'b11; // PC
         reg_IR_Funsel = 2'b01;
-        #10;
+        #5;
         reg_ARF_FunSel = 2'b11; // INC
         reg_ARF_RegSel = 4'b1000; // PC
         //print ar and pc
@@ -156,7 +155,7 @@ always @(seq_counter) begin
         reg_IR_Enable = 1;
         reg_IR_LH = 1;
         reg_IR_Funsel = 2'b01;
-        #1;
+        #0.5;
         reg_ARF_FunSel = 2'b11; // INC
         reg_ARF_RegSel = 4'b1000; // PC
     end
@@ -204,10 +203,10 @@ always @(seq_counter) begin
                 if (seq_counter == 2'b10) begin // T2: RF <- RF - RF
                     SREGA = SREG1;
                     SREGB = SREG2;
-                    #2;
+                    #1;
                     update_SREGA_flag = 1;
                     update_SREGB_flag = 1;
-                    #2;
+                    #1;
                     reg_ALU_FunSel = 4'b0101;
                     //t3
                     update_DSTREG_flag = 1;
@@ -247,7 +246,7 @@ always @(seq_counter) begin
                         reg_RF_FunSel = 2'b11; // INC
                     end
                 end
-                #2;
+                #1;
             end
             4'b1000 : begin //DEC
                 if (seq_counter == 2'b10) begin
@@ -265,14 +264,14 @@ always @(seq_counter) begin
                         reg_RF_FunSel = 2'b10; // INC
                     end
                 end
-                #2;
+                #1;
             end
             4'b1001 : begin //BRA
                 if (seq_counter == 2'b10) begin //BRA
                     reg_MuxBSel = 2'b10;
                     reg_ARF_RegSel = 4'b1000; //PC
                     reg_ARF_FunSel = 2'b01; // LOAD
-                    #5;
+                    #2.5;
                     reg_ARF_RegSel = 4'b1000; //PC
                     reg_ARF_FunSel = 2'b10; // DEC
                     //seq_counter = 4'hff;
@@ -292,7 +291,7 @@ always @(seq_counter) begin
                         reg_MuxBSel = 2'b10;
                         reg_ARF_RegSel = 4'b1000; //PC
                         reg_ARF_FunSel = 2'b01; // LOAD
-                        #5;
+                        #2.5;
                         reg_ARF_RegSel = 4'b1000; //PC
                         reg_ARF_FunSel = 2'b10; // DEC
                         //seq_counter = 4'hff;
@@ -309,7 +308,7 @@ always @(seq_counter) begin
                 end
                 else if (seq_counter == 2'b11) begin
                     update_DSTREG_flag = 1;
-                    #5;
+                    #2.5;
                     //seq_counter = 4'hff;
                 end
             end
@@ -338,18 +337,18 @@ always @(seq_counter) begin
                             reg_RF_RSel = 4'b0001; //R4
                         end
                     endcase
-                    #5;
+                    #2.5;
                     //seq_counter <= 4'hff;
                 end
             end
             4'b1101 : begin //ST
                 if (seq_counter == 2'b10) begin // AR <- IR(7-0)
                     reg_ARF_OutDSel <= 2'b00; // AR
-                    #5;
+                    #2.5;
                     reg_MuxBSel <= 2'b11; // MEMORY OUT
                     reg_ARF_FunSel <= 2'b01; // LOAD 
                     reg_ARF_RegSel <= 4'b0100; 
-                    #4;
+                    #2;
                 end
                 if (seq_counter == 2'b11) begin //
                     case (RSEL)
@@ -368,7 +367,7 @@ always @(seq_counter) begin
                     endcase
                 reg_ALU_FunSel = 4'b0001; //Pass B
                 reg_Mem_WR = 1; // write
-                #5;
+                #2.5;
 
                 end
             end
@@ -433,7 +432,7 @@ reg update_DSTREG_flag;
 
 always @(posedge update_SREGA_flag) begin
     reg_MuxCSel = (SREGA > 4'd3) ? 1 : 0;
-    #2;    
+    #1;    
     case(SREGA)
         4'b0000 : begin 
             reg_RF_OutASel = 3'b100;
@@ -460,7 +459,7 @@ always @(posedge update_SREGA_flag) begin
             reg_ARF_OutCSel = 2'b11; // PC
         end
     endcase
-    #6;
+    #3;
     update_SREGA_flag <= 0;
 end
 always @(posedge update_SREGB_flag) begin
@@ -479,7 +478,7 @@ always @(posedge update_SREGB_flag) begin
         reg_RF_OutBSel = 3'b111;
     end
     endcase
-    #8;    
+    #4;    
 
     update_SREGB_flag <= 0;
 end
@@ -495,7 +494,7 @@ always @(posedge update_DSTREG_flag) begin
 
     reg_RF_FunSel = (DSTREG < 4'd4) ? 2'b01 : 2'bX;
     reg_ARF_FunSel = (DSTREG < 4'd4) ? 2'bX : 2'b01;
-    #5;
+    #2.5;
     $display("DSTREG: %d", DSTREG);
     $display("reg_RF_FunSel: %d", reg_RF_FunSel);
     $display("reg_ARF_FunSel: %d", reg_ARF_FunSel);

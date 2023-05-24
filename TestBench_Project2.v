@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "CPUSystem.v"
+`include "sources.v"
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -26,7 +26,7 @@ module Project2Test();
     
     always 
     begin
-        repeat (360) begin
+        repeat (75) begin
             Clock = 1; #5; Clock = 0; #5; // 10ns period
         end
         $finish;
